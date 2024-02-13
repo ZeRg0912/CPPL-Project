@@ -22,4 +22,7 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="test-file.ini" />
+  </ItemGroup>
 </Project>
