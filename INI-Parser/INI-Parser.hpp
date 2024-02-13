@@ -78,8 +78,7 @@ public:
 
 		while (std::getline(file, line)) {
 			line_number++;
-			line.erase(0, line.find_first_not_of(" \t"));
-			line.erase(line.find_last_not_of(" \t") + 1);
+
 			if (line.empty() || line[0] == ';') {
 				continue;
 			}
@@ -96,15 +95,19 @@ public:
 				std::getline(iss, key, '=');
 				std::getline(iss, value);
 
-				size_t comment_pos = value.find(';');
+				value.erase(0, value.find_first_not_of(" \t"));
+				value.erase(value.find_last_not_of(" \t") + 1);
+
+				/*size_t comment_pos = value.find(';');
 				if (comment_pos != std::string::npos) {
 					value = value.substr(0, comment_pos);
-				}
+				}*/
 				data[current_section][key] = value;
 				line_numbers[current_section + '.' + key] = line_number;
 				section_exists = true;
 			}
 		}
+		file.close();
 	}
 
 	template<typename T>
