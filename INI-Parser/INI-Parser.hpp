@@ -29,13 +29,26 @@ private:
 	std::string GetAvailableType(const std::string& section) const {
 		std::set<std::string> types;
 		for (const auto& pair : data.at(section)) {
-			std::istringstream iss(pair.second);
-			std::string value;
-			iss >> value;
-			if (value.find_first_of("0123456789")) {
-				if (!value.find('.')) types.insert("int");
-				else types.insert("double");
+			std::string value = pair.second;
+			bool isNum = true;
+
+			bool hasDigit = false;
+			bool hasDot = false;
+			for (char ch : value) {
+				if (isdigit(ch)) {
+					hasDigit = true;
+				}
+				else if (ch == '.') {
+					hasDot = true;
+				}
+				else {
+					isNum = false;
+					break;
+				}
 			}
+			
+			if (isNum && hasDigit && !hasDot) types.insert("int");
+			else if (isNum && hasDigit && hasDot) types.insert("double");
 			else types.insert("string");
 		}
 
@@ -100,6 +113,13 @@ public:
 		if (data.at(section).empty()) throw std::runtime_error("In " + section + " variables not found");
 		if (data.count(section) && data.at(section).count(key)) {
 			std::istringstream iss(data.at(section).at(key));
+			std::string value_str = data.at(section).at(key);
+			if (value_str.empty()) throw std::runtime_error(
+				"Value not assigned for: "
+				+ section
+				+ ", "
+				+ key
+			);
 			T value;
 			if (!(iss >> value))
 			{

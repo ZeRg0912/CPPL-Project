@@ -6,7 +6,7 @@ int main() {
 	
 	INIParser parser("test-file");
 	try {
-		auto value = parser.GetValue<int>("Section2.var3");
+		auto value = parser.GetValue<std::string>("Section4.Vid");
 		std::cout << value << std::endl;
 	}
 	catch (const std::exception& e) {
