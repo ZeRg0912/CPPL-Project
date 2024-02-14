@@ -1,7 +1,7 @@
 #include <iostream>
 #include "INI-Parser.hpp"
 
-int main() {
+int main1() {
 	setlocale(LC_ALL, "RUSSIAN");
 	
 	INIParser parser("test-file");

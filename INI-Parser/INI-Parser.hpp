@@ -99,6 +99,9 @@ public:
 					value = value.substr(0, comment_pos);
 				}
 
+				value.erase(0, value.find_first_not_of(" \t"));
+				value.erase(value.find_last_not_of(" \t") + 1);
+
 				data[current_section][key] = value;
 				line_numbers[current_section + '.' + key] = line_number;
 				section_exists = true;
@@ -176,7 +179,7 @@ public:
 	template<typename T>
 	T GetValue(const std::string& section_key) const {
 		size_t dot_pos = section_key.find('.');
-		if (dot_pos == std::string::npos) throw std::runtime_error("Incorrect format, expected format: SectionN.Var#!");
+		if (dot_pos == std::string::npos) throw std::runtime_error("Incorrect format, expected format: Section#.Var#!");
 		std::string section = section_key.substr(0, dot_pos);
 		std::string key = section_key.substr(dot_pos + 1);
 		return GetValue<T>(section, key);
