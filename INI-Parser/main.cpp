@@ -6,14 +6,14 @@ int main() {
 	
 	INIParser parser("test-file");
 	try {
-		auto value = parser.GetValue<std::string>("Section2.var2");
+		auto value = parser.GetValue<std::string>("Section1.var2");
 		std::cout << value << std::endl;
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}
 
-	std::cout << "\nEnd of process\n";
+	std::cout << "\nEnd of parsing process...\n";
 	//system("pause");
 	return 0;
 }

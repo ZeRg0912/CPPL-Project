@@ -26,34 +26,32 @@ private:
 		return oss.str();
 	}
 
-	std::string GetAvailableType(const std::string& section) const {
+	std::string GetAvailableType(const std::string& section, const std::string& key) const {
 		std::set<std::string> types;
-		for (const auto& pair : data.at(section)) {
-			std::string value = pair.second;
-			bool isNum = true;
+		std::string value = data.at(section).at(key);
+		bool isNum = true;
 
-			bool hasDigit = false;
-			bool hasDot = false;
-			for (char ch : value) {
-				if (isdigit(ch)) {
-					hasDigit = true;
-				}
-				else if (ch == '.') {
-					hasDot = true;
-				}
-				else {
-					isNum = false;
-					break;
-				}
+		bool hasDigit = false;
+		bool hasDot = false;
+		for (char ch : value) {
+			if (isdigit(ch)) {
+				hasDigit = true;
 			}
-			
-			if (isNum && hasDigit && !hasDot) types.insert("int");
-			else if (isNum && hasDigit && hasDot) types.insert("double");
-			else types.insert("string");
+			else if (ch == '.') {
+				hasDot = true;
+			}
+			else {
+				isNum = false;
+				break;
+			}
 		}
+			
+		if (isNum && hasDigit && !hasDot) types.insert("int");
+		else if (isNum && hasDigit && hasDot) types.insert("double");
+		else types.insert("string");
 
 		std::ostringstream oss;
-		oss << "[";
+		//oss << "[";
 		bool first = true;
 		for (const auto& type : types) {
 			if (!first) {
@@ -62,7 +60,7 @@ private:
 			oss << type;
 			first = false;
 		}
-		oss << "]";
+		//oss << "]";
 		return oss.str();
 	}
 
@@ -82,13 +80,11 @@ public:
 			if (line.empty() || line[0] == ';') {
 				continue;
 			}
-
 			else if (line[0] == '[' && line.back() == ']') {
 				if (!current_section.empty() && !section_exists) data[current_section];
 				current_section = line.substr(1, line.size() - 2);
 				section_exists = false;
 			}
-
 			else {
 				std::istringstream iss(line);
 				std::string key, value;
@@ -98,10 +94,11 @@ public:
 				value.erase(0, value.find_first_not_of(" \t"));
 				value.erase(value.find_last_not_of(" \t") + 1);
 
-				/*size_t comment_pos = value.find(';');
+				size_t comment_pos = value.find(';');
 				if (comment_pos != std::string::npos) {
 					value = value.substr(0, comment_pos);
-				}*/
+				}
+
 				data[current_section][key] = value;
 				line_numbers[current_section + '.' + key] = line_number;
 				section_exists = true;
@@ -115,7 +112,6 @@ public:
 		if (data.count(section) == 0) throw std::runtime_error(section + " not found");
 		if (data.at(section).empty()) throw std::runtime_error("In " + section + " variables not found");
 		if (data.count(section) && data.at(section).count(key)) {
-			std::istringstream iss(data.at(section).at(key));
 			std::string value_str = data.at(section).at(key);
 			if (value_str.empty()) throw std::runtime_error(
 				"Value not assigned for: "
@@ -124,7 +120,9 @@ public:
 				+ key
 			);
 			T value;
-			if (!(iss >> value))
+			std::istringstream iss(value_str);
+			std::getline(iss, value);
+			if (iss.fail())
 			{
 				throw std::runtime_error(
 					"Conversion is not allowed for the "
@@ -135,8 +133,8 @@ public:
 					+ "Incorrect format on the line: "
 					+ std::to_string(line_numbers.at(section + '.' + key))
 					+ ".\n"
-					+ "Available types in this section: "
-					+ GetAvailableType(section)
+					+ "Available types in this variable: "
+					+ GetAvailableType(section, key)
 				);
 			}
 			return value;
