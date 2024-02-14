@@ -111,6 +111,7 @@ public:
 	T GetValue(const std::string& section, const std::string& key) const {
 		if (data.count(section) == 0) throw std::runtime_error(section + " not found");
 		if (data.at(section).empty()) throw std::runtime_error("In " + section + " variables not found");
+		
 		if (data.count(section) && data.at(section).count(key)) {
 			std::string value_str = data.at(section).at(key);
 			if (value_str.empty()) throw std::runtime_error(
@@ -119,10 +120,9 @@ public:
 				+ ", "
 				+ key
 			);
+			std::istringstream iss(data.at(section).at(key));
 			T value;
-			std::istringstream iss(value_str);
-			std::getline(iss, value);
-			if (iss.fail())
+			if (!(iss >> value))
 			{
 				throw std::runtime_error(
 					"Conversion is not allowed for the "
@@ -138,6 +138,27 @@ public:
 				);
 			}
 			return value;
+		}
+		else {
+			throw std::runtime_error(
+				"The value was not found for the: "
+				+ section
+				+ ", "
+				+ key
+				+ ".\n"
+				+ "Available variables in this section: "
+				+ GetAvailableVar(section)
+			);
+		}
+	}
+
+	template<>
+	std::string GetValue(const std::string& section, const std::string& key) const {
+		if (data.count(section) == 0) throw std::runtime_error(section + " not found");
+		if (data.at(section).empty()) throw std::runtime_error("In " + section + " variables not found");
+
+		if (data.count(section) && data.at(section).count(key)) {
+			return data.at(section).at(key);
 		}
 		else {
 			throw std::runtime_error(
