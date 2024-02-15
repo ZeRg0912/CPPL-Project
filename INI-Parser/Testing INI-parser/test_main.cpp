@@ -1,5 +1,5 @@
 #include <iostream>
-#include "INI-Parser.hpp"
+#include "../INI-Parser.hpp"
 #include "catch_amalgamated.hpp"
 
 TEST_CASE("TESTING:", "[INI-Parser]") {
@@ -23,10 +23,8 @@ TEST_CASE("TESTING:", "[INI-Parser]") {
 		}
 		SECTION("VAR 2:") {
 			path = "Section1.var2";
-			// Output double
-			/*auto value_1_2_1 = parser.GetValue<int>(path);
-			std::cout << path << " = " << value_1_2_1 << '\n';
-			CHECK(value_1_2_1 == 1.1);*/
+			// Output int
+			CHECK_THROWS(parser.GetValue<int>(path));
 
 			// Output string
 			auto value_1_2_2 = parser.GetValue<std::string>(path);
@@ -72,9 +70,22 @@ TEST_CASE("TESTING:", "[INI-Parser]") {
 			CHECK(value_2_3_1 == "значение_3");
 		}
 	}
-
-	
-
+	SECTION("SECTION 3:") {
+		SECTION("NO VAR") {
+			path = "Section3.var1";
+			// Empty section
+			CHECK_THROWS_WITH(parser.GetValue<std::string>(path), "In Section3 variables not found");
+		}
+	}
+	SECTION("SECTION 4:") {
+		path = "Section4.var1";
+		// Check section with value not assigned  
+		CHECK_THROWS_WITH(parser.GetValue<int>(path), "The value was not found for the: Section4, var1.\nAvailable variables in this section: [Mode, Vid]");
+	}
+	SECTION("TRY CHECKING DIFFERENT TYPES OF ACCESS TO THE INI - FILE") {
+		path = "Section1";
+		CHECK_THROWS_WITH(parser.GetValue<std::string>(path), "Incorrect format, expected format: Section#.Var#!");
+	}
 }
 
 int main() {
