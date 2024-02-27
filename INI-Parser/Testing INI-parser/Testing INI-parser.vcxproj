@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\INI-parser.cpp" />
     <ClCompile Include="catch_amalgamated.cpp" />
     <ClCompile Include="test_main.cpp" />
   </ItemGroup>

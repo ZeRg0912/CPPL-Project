@@ -4,7 +4,7 @@
 
 TEST_CASE("TESTING:", "[INI-Parser]") {
 	std::string path;
-	INIParser parser("test-file");
+	INIParser parser("test-file.ini");
 	SECTION("SECTION 1:") {
 		SECTION("VAR 1:") {
 			path = "Section1.var1";
